@@ -1,7 +1,11 @@
 KER = $(shell uname -r)
-OBJ = stub
+OBJ = vbat
 
 obj-m = ${OBJ}.o
+vbat-objs = stub.o
 
 all:
 	make -C /lib/modules/$(KER)/build M=$(PWD) modules
+
+clean:
+	make -C /lib/modules/$(KER)/build M=$(PWD) clean
