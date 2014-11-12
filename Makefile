@@ -9,3 +9,9 @@ all:
 
 clean:
 	make -C /lib/modules/$(KER)/build M=$(PWD) clean
+
+insmod:
+	sudo insmod $(OBJ).ko
+
+rmmod:
+	sudo rmmod $(OBJ).ko
