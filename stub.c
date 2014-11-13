@@ -4,24 +4,58 @@
 #include <linux/platform_device.h>
 #include <linux/power_supply.h>
 
-const int capacity = 42;
 static struct platform_device *vbat_platdev;
 
 static enum power_supply_property vbat_props[] =
 {
-    POWER_SUPPLY_PROP_CAPACITY
+    POWER_SUPPLY_PROP_CAPACITY,
+    POWER_SUPPLY_PROP_ENERGY_FULL,
+    POWER_SUPPLY_PROP_ENERGY_NOW,
 };
+
+static struct power_supply power_supply_vbat;
 
 static int get_vbat_props( struct power_supply* ps
                          , enum power_supply_property pp
                          , union power_supply_propval *v)
 {
     int ret = 0;
+    int i = 0;
+    union power_supply_propval tempval;
+
+    int count_bats = 2;
+    struct power_supply *bats[] = { power_supply_get_by_name("BAT0")
+                                  , power_supply_get_by_name("BAT1")
+                                  };
+    long sum = 0;
+    long tmp;
 
     switch(pp)
     {
         case POWER_SUPPLY_PROP_CAPACITY:
-            v->intval = capacity;
+            power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_FULL, &tempval);
+            tmp = tempval.intval;
+            power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_NOW, &tempval);
+            sum = tempval.intval;
+            sum = sum * 100 / tmp;
+            v->intval = (int)sum;
+            break;
+        case POWER_SUPPLY_PROP_ENERGY_NOW:
+            for(i = 0; i < count_bats; i++)
+            {
+                if (bats[i]->get_property(bats[i], POWER_SUPPLY_PROP_ENERGY_NOW, &tempval) != -EINVAL)
+                    sum += tempval.intval;
+            }
+            v->intval = sum;
+            break;
+
+        case POWER_SUPPLY_PROP_ENERGY_FULL:
+            for(i = 0; i < count_bats; i++)
+            {
+                if (bats[i]->get_property(bats[i], POWER_SUPPLY_PROP_ENERGY_FULL, &tempval) != -EINVAL)
+                    sum += tempval.intval;
+            }
+            v->intval = sum;
             break;
         default:
             ret = -EINVAL;
