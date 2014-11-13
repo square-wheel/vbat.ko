@@ -15,6 +15,13 @@ static enum power_supply_property vbat_props[] =
 
 static struct power_supply power_supply_vbat;
 
+int percent(int now, int full)
+{
+    long long_now  = now;
+    long long_full = full;
+    return long_now * 100 / long_full;
+}
+
 static int get_vbat_props( struct power_supply* ps
                          , enum power_supply_property pp
                          , union power_supply_propval *v)
@@ -33,12 +40,10 @@ static int get_vbat_props( struct power_supply* ps
     switch(pp)
     {
         case POWER_SUPPLY_PROP_CAPACITY:
-            power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_FULL, &tempval);
-            tmp = tempval.intval;
             power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_NOW, &tempval);
-            sum = tempval.intval;
-            sum = sum * 100 / tmp;
-            v->intval = (int)sum;
+            tmp = tempval.intval;
+            power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_FULL, &tempval);
+            v->intval = percent(tmp, tempval.intval);
             break;
         case POWER_SUPPLY_PROP_ENERGY_NOW:
             for(i = 0; i < count_bats; i++)
