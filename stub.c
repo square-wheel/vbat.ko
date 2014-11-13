@@ -22,19 +22,32 @@ int percent(int now, int full)
     return long_now * 100 / long_full;
 }
 
+int summator(enum power_supply_property prop, struct device *dev, long *sum)
+{
+    union power_supply_propval value;
+    struct power_supply *psy = dev_get_drvdata(dev);
+    if (strcmp(psy->name, power_supply_vbat.name))
+        if (psy->get_property(psy, prop, &value) != -EINVAL)
+            *sum += value.intval;
+    return 0;
+}
+
+
+int energy_now_summator(struct device *dev, void *energy_now_sum)
+{
+    return summator(POWER_SUPPLY_PROP_ENERGY_NOW, dev, energy_now_sum);
+}
+
+int energy_full_summator(struct device *dev, void *energy_full_sum)
+{
+    return summator(POWER_SUPPLY_PROP_ENERGY_FULL, dev, energy_full_sum);
+}
+
 static int get_vbat_props( struct power_supply* ps
                          , enum power_supply_property pp
                          , union power_supply_propval *v)
 {
-    int ret = 0;
-    int i = 0;
     union power_supply_propval tempval;
-
-    int count_bats = 2;
-    struct power_supply *bats[] = { power_supply_get_by_name("BAT0")
-                                  , power_supply_get_by_name("BAT1")
-                                  };
-    long sum = 0;
     long tmp;
 
     switch(pp)
@@ -46,27 +59,17 @@ static int get_vbat_props( struct power_supply* ps
             v->intval = percent(tmp, tempval.intval);
             break;
         case POWER_SUPPLY_PROP_ENERGY_NOW:
-            for(i = 0; i < count_bats; i++)
-            {
-                if (bats[i]->get_property(bats[i], POWER_SUPPLY_PROP_ENERGY_NOW, &tempval) != -EINVAL)
-                    sum += tempval.intval;
-            }
-            v->intval = sum;
+            v->intval = 0;
+            class_for_each_device(power_supply_class, NULL, (void*)(&v->intval), energy_now_summator);
             break;
-
         case POWER_SUPPLY_PROP_ENERGY_FULL:
-            for(i = 0; i < count_bats; i++)
-            {
-                if (bats[i]->get_property(bats[i], POWER_SUPPLY_PROP_ENERGY_FULL, &tempval) != -EINVAL)
-                    sum += tempval.intval;
-            }
-            v->intval = sum;
+            v->intval = 0;
+            class_for_each_device(power_supply_class, NULL, (void*)(&v->intval), energy_full_summator);
             break;
         default:
-            ret = -EINVAL;
-            break;
+            return -EINVAL;
     }
-    return ret;
+    return 0;
 }
 
 static struct power_supply power_supply_vbat =
