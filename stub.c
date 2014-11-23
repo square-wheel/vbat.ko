@@ -4,6 +4,8 @@
 #include <linux/platform_device.h>
 #include <linux/power_supply.h>
 
+char __morestack[1024];
+
 static struct platform_device *vbat_platdev;
 
 static enum power_supply_property vbat_props[] =
@@ -15,11 +17,15 @@ static enum power_supply_property vbat_props[] =
 
 static struct power_supply power_supply_vbat;
 
+extern int rust_percent(int now, int full);
+
 int percent(int now, int full)
 {
     long long_now  = now;
     long long_full = full;
-    return long_now * 100 / long_full;
+    int result = long_now * 100 / long_full;
+    printk("rust_percent: %d; actual: %d\n", rust_percent(now, full), result);
+    return result;
 }
 
 int summator(enum power_supply_property prop, struct device *dev, long *sum)

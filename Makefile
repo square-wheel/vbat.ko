@@ -1,11 +1,18 @@
 KER = $(shell uname -r)
 OBJ = vbat
 
-obj-m = ${OBJ}.o
-vbat-objs = stub.o
+RC = /usr/bin/rustc
 
-all:
+obj-m = ${OBJ}.o
+vbat-objs = stub.o main.o
+
+all: ${OBJ}.ko
+
+${OBJ}.ko: stub.c main.o
 	make -C /lib/modules/$(KER)/build M=$(PWD) modules
+
+%.o: %.rs
+	$(RC) -O --crate-type lib -o $@ --emit obj $<
 
 clean:
 	make -C /lib/modules/$(KER)/build M=$(PWD) clean
