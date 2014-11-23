@@ -1,12 +1,15 @@
 #![no_std]
+#![allow(improper_ctypes)]
 #![feature(lang_items)]
 
 #[lang="sized"]
 trait Sized {}
 
+extern {
+    pub fn idiv(a: i64, b: i64) -> i64;
+}
+
 #[no_mangle]
-pub fn rust_percent(now: int, full: int) -> int {
-    return now * 100 / full;
-    // if you want to make it compile:
-    // return 42;
+pub unsafe fn rust_percent(now: i64, full: i64) -> i64 {
+    return idiv(now * 100, full);
 }

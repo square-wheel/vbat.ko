@@ -19,6 +19,8 @@ clean:
 
 insmod:
 	sudo insmod $(OBJ).ko
+	dmesg | tail
 
 rmmod:
 	sudo rmmod $(OBJ).ko
+	dmesg | tail

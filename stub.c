@@ -4,7 +4,21 @@
 #include <linux/platform_device.h>
 #include <linux/power_supply.h>
 
+/* to Rust */
+
 char __morestack[1024];
+char _GLOBAL_OFFSET_TABLE_;
+
+long idiv(long a, long b) {
+    return a / b;
+}
+
+/* from Rust */
+
+extern long rust_percent(long now, long full);
+
+
+/* actual code */
 
 static struct platform_device *vbat_platdev;
 
@@ -16,17 +30,6 @@ static enum power_supply_property vbat_props[] =
 };
 
 static struct power_supply power_supply_vbat;
-
-extern int rust_percent(int now, int full);
-
-int percent(int now, int full)
-{
-    long long_now  = now;
-    long long_full = full;
-    int result = long_now * 100 / long_full;
-    printk("rust_percent: %d; actual: %d\n", rust_percent(now, full), result);
-    return result;
-}
 
 int summator(enum power_supply_property prop, struct device *dev, long *sum)
 {
@@ -62,7 +65,7 @@ static int get_vbat_props( struct power_supply* ps
             power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_NOW, &tempval);
             tmp = tempval.intval;
             power_supply_vbat.get_property(&power_supply_vbat, POWER_SUPPLY_PROP_ENERGY_FULL, &tempval);
-            v->intval = percent(tmp, tempval.intval);
+            v->intval = rust_percent(tmp, tempval.intval);
             break;
         case POWER_SUPPLY_PROP_ENERGY_NOW:
             v->intval = 0;
