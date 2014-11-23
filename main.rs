@@ -1,6 +1,8 @@
 #![no_std]
+#![feature(lang_items)]
 
-extern crate core;
+#[lang="sized"]
+trait Sized {}
 
 #[no_mangle]
 pub fn rust_percent(now: int, full: int) -> int {
