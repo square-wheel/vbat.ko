@@ -16,18 +16,12 @@ long idiv(long a, long b) {
 /* from Rust */
 
 extern long rust_percent(long now, long full);
-
+extern enum power_supply_property RUST_VBAT_PROPS;
 
 /* actual code */
 
 static struct platform_device *vbat_platdev;
 
-static enum power_supply_property vbat_props[] =
-{
-    POWER_SUPPLY_PROP_CAPACITY,
-    POWER_SUPPLY_PROP_ENERGY_FULL,
-    POWER_SUPPLY_PROP_ENERGY_NOW,
-};
 
 static struct power_supply power_supply_vbat;
 
@@ -81,18 +75,18 @@ static int get_vbat_props( struct power_supply* ps
     return 0;
 }
 
-static struct power_supply power_supply_vbat =
-{
-    .properties = vbat_props,
-    .num_properties = ARRAY_SIZE(vbat_props),
-    .get_property = get_vbat_props,
-    .name = "VBAT",
-    .type = POWER_SUPPLY_TYPE_BATTERY,
-};
+static struct power_supply power_supply_vbat;
 
 static int vbat_init(void)
 {
     int ret = 0;
+    power_supply_vbat.properties = &RUST_VBAT_PROPS;
+    power_supply_vbat.num_properties = 3;
+    power_supply_vbat.get_property = get_vbat_props;
+    power_supply_vbat.name = "VBAT",
+    power_supply_vbat.type = POWER_SUPPLY_TYPE_BATTERY,
+
+
     printk(KERN_INFO "vbat: init\n");
     vbat_platdev = platform_device_register_simple("vbat", 0, NULL, 0);
     ret = power_supply_register(&vbat_platdev->dev, &power_supply_vbat);

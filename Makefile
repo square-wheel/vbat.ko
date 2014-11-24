@@ -13,6 +13,7 @@ ${OBJ}.ko: stub.c main.o
 
 %.o: %.rs
 	$(RC) -O --crate-type lib -o $@ --emit obj $<
+	./fixup $@
 
 clean:
 	make -C /lib/modules/$(KER)/build M=$(PWD) clean
