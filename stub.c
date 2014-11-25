@@ -17,6 +17,9 @@ long idiv(long a, long b) {
 
 extern long rust_percent(long now, long full);
 extern enum power_supply_property RUST_VBAT_PROPS;
+extern int RUST_VBAT_NUM_PROPS;
+extern char* RUST_VBAT_NAME;
+extern enum power_supply_type RUST_VBAT_TYPE;
 
 /* actual code */
 
@@ -81,10 +84,10 @@ static int vbat_init(void)
 {
     int ret = 0;
     power_supply_vbat.properties = &RUST_VBAT_PROPS;
-    power_supply_vbat.num_properties = 3;
+    power_supply_vbat.num_properties = RUST_VBAT_NUM_PROPS;
     power_supply_vbat.get_property = get_vbat_props;
-    power_supply_vbat.name = "VBAT",
-    power_supply_vbat.type = POWER_SUPPLY_TYPE_BATTERY,
+    power_supply_vbat.name = RUST_VBAT_NAME;
+    power_supply_vbat.type = RUST_VBAT_TYPE;
 
 
     printk(KERN_INFO "vbat: init\n");

@@ -72,9 +72,24 @@ pub enum power_supply_property {
     SERIAL_NUMBER,
 }
 
+#[repr(C)]
+pub enum power_supply_type {
+    UNKNOWN = 0,
+    BATTERY,
+    UPS,
+    MAINS,
+    USB,      /* Standard Downstream Port */
+    USB_DCP,  /* Dedicated Charging Port */
+    USB_CDP,  /* Charging Downstream Port */
+    USB_ACA,  /* Accessory Charger Adapters */
+}
+
 extern {
     pub fn idiv(a: i64, b: i64) -> i64;
 }
+
+#[no_mangle]
+pub static RUST_VBAT_NUM_PROPS: int = 3;
 
 #[no_mangle]
 pub static RUST_VBAT_PROPS: [power_supply_property, ..3] = [
@@ -83,6 +98,12 @@ pub static RUST_VBAT_PROPS: [power_supply_property, ..3] = [
     power_supply_property::ENERGY_FULL,
     power_supply_property::ENERGY_NOW,
 ];
+
+#[no_mangle]
+pub static RUST_VBAT_NAME: &'static str = "VBAT\0";
+
+#[no_mangle]
+pub static RUST_VBAT_TYPE: power_supply_type = power_supply_type::BATTERY;
 
 #[no_mangle]
 pub unsafe fn rust_percent(now: i64, full: i64) -> i64 {
