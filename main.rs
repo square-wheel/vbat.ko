@@ -44,6 +44,7 @@ pub enum power_supply_property {
     CONSTANT_CHARGE_VOLTAGE_MAX,
     CHARGE_CONTROL_LIMIT,
     CHARGE_CONTROL_LIMIT_MAX,
+    INPUT_CURRENT_LIMIT,
     ENERGY_FULL_DESIGN,
     ENERGY_EMPTY_DESIGN,
     ENERGY_FULL,
@@ -55,6 +56,8 @@ pub enum power_supply_property {
     CAPACITY_ALERT_MAX, /* in percents! */
     CAPACITY_LEVEL,
     TEMP,
+    TEMP_MAX,
+    TEMP_MIN,
     TEMP_ALERT_MIN,
     TEMP_ALERT_MAX,
     TEMP_AMBIENT,
@@ -66,6 +69,7 @@ pub enum power_supply_property {
     TIME_TO_FULL_AVG,
     TYPE, /* use power_supply.type instead */
     SCOPE,
+    CHARGE_TERM_CURRENT,
     /* Properties of type `const char *' */
     MODEL_NAME,
     MANUFACTURER,
