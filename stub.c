@@ -9,10 +9,6 @@
 char __morestack[1024];
 char _GLOBAL_OFFSET_TABLE_;
 
-long idiv(long a, long b) {
-    return a / b;
-}
-
 /* from Rust */
 
 extern long rust_percent(long now, long full);
