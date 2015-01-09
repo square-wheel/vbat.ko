@@ -18,9 +18,11 @@ pub enum power_supply_property {
     VOLTAGE_NOW,
     VOLTAGE_AVG,
     VOLTAGE_OCV,
+    VOLTAGE_BOOT,
     CURRENT_MAX,
     CURRENT_NOW,
     CURRENT_AVG,
+    CURRENT_BOOT,
     POWER_NOW,
     POWER_AVG,
     CHARGE_FULL_DESIGN,
@@ -62,6 +64,7 @@ pub enum power_supply_property {
     TYPE, /* use power_supply.type instead */
     SCOPE,
     CHARGE_TERM_CURRENT,
+    CALIBRATE,
     /* Properties of type `const char *' */
     MODEL_NAME,
     MANUFACTURER,

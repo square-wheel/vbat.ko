@@ -11,10 +11,10 @@ mod power_supply;
 mod zero;
 
 #[no_mangle]
-pub static RUST_VBAT_NUM_PROPS: int = 3;
+pub static RUST_VBAT_NUM_PROPS: isize = 3;
 
 #[no_mangle]
-pub static RUST_VBAT_PROPS: [power_supply_property, ..3] = [
+pub static RUST_VBAT_PROPS: [power_supply_property; 3] = [
 
     power_supply_property::CAPACITY,
     power_supply_property::ENERGY_FULL,

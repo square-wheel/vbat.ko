@@ -4,9 +4,12 @@ trait Sized {}
 #[lang="sync"]
 trait Sync {}
 
+#[lang="copy"]
+trait Copy {}
+
 #[cold]
 #[lang="panic"]
-pub fn panic(_ : &(&'static str, &'static str, uint)) -> ! {
+pub fn panic(_ : &(&'static str, &'static str, usize)) -> ! {
     unsafe { abort() }
 }
 
