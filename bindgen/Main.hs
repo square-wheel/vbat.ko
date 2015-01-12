@@ -1,4 +1,7 @@
+{-# LANGUAGE RecordWildCards #-}
+
 import Options.Applicative
+import qualified Language.C as LangC
 
 data Options = Options
     { headerFilename :: String
@@ -15,5 +18,7 @@ handleOptions = info (helper <*> pOptions) (header "rust-bindgen")
 
 main :: IO ()
 main = do
-    _opts <- execParser handleOptions
-    putStrLn "So..."
+    Options { .. } <- execParser handleOptions
+    putStrLn $ headerFilename ++ " -> " ++ outputFilename
+    headerContent <- LangC.parseCFilePre headerFilename
+    print headerContent

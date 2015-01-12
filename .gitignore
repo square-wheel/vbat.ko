@@ -8,3 +8,8 @@
 
 fixup
 fixup.rs
+power_supply.i
+
+dist
+.cabal-sandbox
+cabal.sandbox.config
